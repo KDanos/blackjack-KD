@@ -4,7 +4,6 @@ html, body {
     height: 100%;
     margin:0;
     padding: 0;
-    
 }
 
 .my-grid{
@@ -15,7 +14,6 @@ html, body {
     margin:0 auto;
     width:90%;
     height: 90%;
-    border: 1px solid black;
 }
 
 #Top-Elements {    
@@ -23,6 +21,7 @@ html, body {
     align-self: stretch;
     border: 1px solid black;
     margin: 10px;
+    background-color: lightcyan;
 }
 
 #Table {
@@ -32,39 +31,81 @@ html, body {
     margin: 10px;
     display:flex;
     flex-direction: column;
+    background-color: rgba(175, 245, 225, 0.5);
+    border-radius: 25%;
 }
 
 #Dealer-Container{
     flex:1;
     border: 1px solid black;
     margin: 10px;
+    display: flex;
+    /* align-self: stretch; */
+    /* align items; */
+    justify-content: center;
 }
 
-#Player-Container{
+#Player-Seats{
     flex:1;
     border: 1px solid black;
     margin: 10px;
-}
-/* #dealer-container{
-    flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
-
-} */
-
-/* #player-container{
-    flex: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
-div {
+
+.Player-Container {
     border: 1px solid black;
-    gap: 10px;   
-} */ 
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
 
+.Player-Name {
+    /* border: 1px solid black; */
+    flex: 1;
+    margin: 5px;
+    font-weight: bold;
+    font-size: larger;
+}
 
+.Cash-Button {
+    flex: 1;
+    width: 50px;
+    border-radius: 50%;
+}
 
+.Hands-Container {
+    flex: 5;
+    border: 1px solid black;
+    margin: 2px;
+    display: flex;
+}
 
+.Options-Container {
+    flex: 1;
+    margin: 2px;
+    display:flex;
+    justify-content: center;
+}
 
+.Options-Button{
+    height: 100%;
+    width: auto;
+    /* aspect-ratio: 1 / 1; */
+    border-radius: 50%
+}
+
+.Bet-Input-Box{
+    width: 20px;
+    height: 100%;
+    background-color: rgba(175, 245, 225, 0.5);
+    border: none;
+    font-weight: 700;
+}
+
+.Hand {
+    border: 1px solide black;
+    width: 50px;
+}
