@@ -1,4 +1,3 @@
-
 //Constants
 const table = {
     cards: [],
@@ -8,12 +7,16 @@ const table = {
 // const card = {};
 // const hands = [];
 const players = table.players;
+
 const faceDownImage = new Image();
 faceDownImage.src = 'images/red_joker.png'
 faceDownImage.classList.add('Card-Image')
-//Cached element
+
+//Cached element---------------------------------------------------------------------------------------------------------
 const playersSeats = document.querySelector('#Player-Seats');
 const dealerSeat = document.querySelector('#Dealer-Container')
+const startButton = document.querySelector(`#Start-Button`)
+const sitButton = document.querySelector(`#Sit-Button`)
 
 //Initialise the table--------------------------------------------------------------------------------------------------
 const createADeck = () => {
@@ -33,7 +36,7 @@ const createADeck = () => {
     })
     return deck
 }
-
+console.log(players===table.players);
 const asignCardAttributes = (deck) => {
     deck.forEach((card) => {
         if (card.face === 'A') { card.value = 11 }
@@ -68,7 +71,7 @@ const mixDecks = (noOfDecks, deck) => {
     }
 }
 
-const init = (noOfDecks) => {
+const setTheCards = (noOfDecks) => {
     const deck = createADeck();
     generateCardPicture(deck);
     asignCardAttributes(deck);
@@ -84,9 +87,10 @@ const addPlayer = (playerName, cash = 0, hands = [], isDealer = false, isInGame 
         isDealer: isDealer,
         isInGame: isDealer,
         isAllowedHand: true,
-        options: []
+        status: 'Out'
     }
     players.push(newPlayer)
+    console.log(table.players===players)
 }
 
 const sitAPlayer = (player) => {
@@ -135,34 +139,30 @@ const makeBetButton = ((player) => {
     const newBtn = makeOptionsButton(player, 'Bet');
     const parentElement = document.getElementById(`${player.playerName}-Options-List`)
     parentElement.appendChild(newBtn)
-    // const newBtn = document.createElement('button');
-    // newBtn.classList.add('Options-Button');
-    // newBtn.textContent = 'Bet';
-    // parentElement = document.getElementById(`${player.playerName}-Options-List`)
-    // parentElement.appendChild(newBtn)
     newBtn.addEventListener('click', handlePlayerBets)
+    player.status = 'active'
 })
 
 const makeSkipButton = ((player) => {
     const newBtn = makeOptionsButton(player, 'Skip');
     const parentElement = document.getElementById(`${player.playerName}-Options-List`)
     parentElement.appendChild(newBtn)
-    // const newBtn = document.createElement('button');
-    // newBtn.classList.add('Options-Button');
-    // newBtn.textContent = 'Skip';
-    // parentElement = document.getElementById(`${player.playerName}-Options-List`)
-    // parentElement.appendChild(newBtn)
     newBtn.addEventListener('click', handlePlayerSkips)
 })
 
-const makeHitButton = ((player, handIndex) => {
-    const newBtn = makeOptionsButton(player, 'Hit');
+const makeDoneButton = ((player, handIndex) => {
+    const newBtn = makeOptionsButton(player, 'Done');
     const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
-    // newBtn.classList.add('Options-Button');
-    // newBtn.textContent = 'Hit';
-    // parentElement = document.getElementById(`${player.playerName}-Options-List`)
     parentElement.appendChild(newBtn)
-    newBtn.addEventListener('click', handlePlayerHits)
+    player.status = 'stopped'
+})
+
+const makeBustButton = ((player, handIndex) => {
+    clearHandButtons(player, handIndex);
+    const newBtn = makeOptionsButton(player, 'Bust');
+    const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
+    parentElement.appendChild(newBtn)
+    player.status = 'Bust'
 })
 
 const makeStayButton = ((player, handIndex) => {
@@ -170,14 +170,58 @@ const makeStayButton = ((player, handIndex) => {
     const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
     parentElement.appendChild(newBtn)
     newBtn.addEventListener('click', handlePlayerStays)
+})
 
-    // newBtn.textContent = 'Stay';
-    // parentElement = document.getElementById(`${player.playerName}-Options-List`)
-    // parentElement.appendChild(newBtn)
-    // newBtn.addEventListener('click', handlePlayerStays)
+const makeHitButton = ((player, handIndex) => {
+    console.log(`this is the PLAYER hit button, for player ${player.playerName}`)
+    const newBtn = makeOptionsButton(player, 'Hit');
+    const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
+    parentElement.appendChild(newBtn)
+    newBtn.addEventListener('click', handlePlayerHits)
+})
+
+const makeDealerShowButton = ((player) => {
+    const newBtn = makeOptionsButton(player, 'Show');
+    const parentElement = document.getElementById(`${player.playerName}-Options-List`)
+    parentElement.appendChild(newBtn)
+    newBtn.addEventListener('click', handleDealerShows)
+    player.status = 'active'
+})
+
+const makeDealerStaysButton = ((player) => {
+    console.log('this is the makeDealerStaysButton')
+    const newBtn = makeOptionsButton(player, 'Stay');
+    const parentElement = document.getElementById(`${player.playerName}-Options-List`)
+    parentElement.appendChild(newBtn)
+    player.status = 'finished'
+    endGame()
+})
+
+const makeDealerHitsButton = ((player) => {
+    const newBtn = makeOptionsButton(player, 'Hit');
+    const parentElement = document.getElementById(`${player.playerName}-Options-List`)
+    parentElement.appendChild(newBtn)
+    newBtn.addEventListener('click', handlePlayerHits)
+})
+
+const makeDealerBustButton = ((player) => {
+    const newBtn = makeOptionsButton(player, 'Bust');
+    const parentElement = document.getElementById(`${player.playerName}-Options-List`)
+    parentElement.appendChild(newBtn)
+    player.status = 'bust'
+    endGame()
+})
+
+const makeBlackJackButton = ((player, handIndex) => {
+    const newBtn = makeOptionsButton(player, 'BlackJack!!!');
+    const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
+    newBtn.style.color = 'red';
+    parentElement.appendChild(newBtn);
+    player.status = 'BlackJack'
 })
 
 const makeDrawCardButton = ((player) => {
+    console.log(`you are in the makeDrawCardButton method`)
     const newBtn = document.createElement('button');
     newBtn.classList.add('Options-Button');
     newBtn.textContent = 'Draw';
@@ -186,33 +230,37 @@ const makeDrawCardButton = ((player) => {
     newBtn.addEventListener('click', handleDrawCard)
 })
 
+const clearHandButtons = ((player, handIndex) => {
+    const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`)
+    parentElement.innerHTML = ''
+})
+
 const countHandValue = (hand) => {
     let totalPoints = 0;
     hand.cards.forEach((card) => {
-        totalPoints += card.value
+        if (card.isFaceUp) {
+            totalPoints += card.value
+        }
     })
     hand.score = totalPoints
 }
 
 const dealACard = (hand, player) => {
-    console.log ('we are inside the dealACard method');
-    console.log(`the hand is `, hand);
-    console.log('the player is', player);
     const myIndex = Math.floor(Math.random() * table.cards.length);
     const myCardArray = table.cards.splice(myIndex, 1);
     const myCard = myCardArray[0];
+    console.log('while dealing, I am holding card', myCard);
+    console.log('i want to place this card to ', hand)
     hand.cards.push(myCard)
-    countHandValue(hand);
     if (player.playerName === 'Dealer' && hand.cards.length === 2) {
         myCard.isFaceUp = false;
-        myCard.value = 0;
     }
+    countHandValue(hand);
     updateHandDiv(hand, player)
     return myCard
 }
 
 const createHandDiv = (player, bet) => {
-    console.log('I have entered the createHandDiv function')
     //cache an element to track the new hand div
     const newHandElmt = document.createElement('div');
     //add the new had to the players hands array
@@ -265,28 +313,6 @@ const createHand = (player, bet) => {
     return [newHand, player]
 }
 
-// const playerCanBet = ((player) => {
-//     if (!player.isInGame) {
-//         console.log(`player ${player.playerName} has the options to bet`)
-//         player.isInGame = true;
-//         player.hands.push(
-//             newHand = {
-//                 cards: [],
-//                 bet: 10
-//             })
-//     }
-// })
-
-// const checkPlayerOptions = (player) => {
-//     console.log('I am inside the checkPlayerOptions method')
-//     console.log(`I am looking at ${player.playerName}'s options`,player ) 
-//     if (player.isAllowedHand) {
-//         makeBetButton(player)
-//         makeSkipButton(player)
-//     }
-//     else {return}
-// }
-
 const identifyPlayer = (event) => {
     const containerId = event.target.parentElement.parentElement.id;
     const myPlayerName = containerId.split('-')[0];
@@ -296,28 +322,29 @@ const identifyPlayer = (event) => {
 }
 
 const identifyHand = ((event) => {
-    const handId = event.target.parentElement.parentElement.id;
-    console.log(`inside the identifyHand method, the handId is`, handId)
-    const myHandIndex = handId.split('-')[2];
-    console.log(`myhandIndex is ${myHandIndex}`);
+    console.clear()
     const myPlayer = identifyPlayer(event);
-    const myHand = myPlayer.hands[myHandIndex];
-    console.log (`myHand is `, myHand);
-    return myHand;    
+    const handId = event.target.parentElement.parentElement.id;
+    const myHandIndex = handId.split('-')[2];
+    let myHand = myPlayer.hands[myHandIndex];
+
+    if (myPlayer.playerName === "Dealer"){
+        myHand = myPlayer.hands[0];
+    }
+    return myHand;
 })
 
 
 const updateCashButton = (player) => {
-    console.log('I have entered the updateCashButton function')
     const cashDisplay = document.getElementById(`${player.playerName}-cash`);
     cashDisplay.textContent = `$${player.cash}`
 }
 
 const updateHandDiv = (hand, player) => {
-    console.log('I have entered the updateHandDiv method')
-    handIndex = player.hands.indexOf(hand);
+    const handIndex = player.hands.indexOf(hand);
     const divElmt = document.getElementById(`${player.playerName}-hand-${handIndex}-Cards-Container`)
-    let newImage
+    divElmt.innerHTML = '';
+    let newImage;
     hand.cards.forEach((card) => {
         if (player.playerName != 'Dealer') {
             newImage = card.cardImage;
@@ -334,7 +361,92 @@ const updateHandDiv = (hand, player) => {
     pointsBtn.textContent = hand.score;
 }
 
-const startTheGame = () => {
+const checkHandOptions = () => {
+    players.forEach((player) => {
+        if (player.playerName != 'Dealer' && player.isInGame) {
+            player.hands.forEach((hand) => {
+                const handIndex = player.hands.indexOf(hand);
+                clearHandButtons(player, handIndex);
+                if (hand.score > 21) {
+                    makeBustButton(player, handIndex);
+                }
+                else if (hand.score === 21 && hand.cards.length === 2) {
+                    makeBlackJackButton(player, handIndex)
+                }
+                else {
+                    makeHitButton(player, handIndex);
+                    makeStayButton(player, handIndex);
+                }
+            })
+        }
+        else if (player.playerName === 'Dealer') {
+            checkDealerOptions()
+        }
+        else { console.log('not a dealer anot a player?') }
+    }
+    )
+}
+
+const checkDealerOptions = () => {
+    const parentElement = document.getElementById("Dealer-Options-List")
+    const theDealer = players[players.length - 1];
+    parentElement.innerHTML = ''
+    dealerHand = theDealer.hands[0];
+    console.log(`the dealer status is ${theDealer.status}`)
+    if (theDealer.status === 'Bust' || theDealer.status === 'Stay') {
+        console.log('dealer will now end the game')
+        endGame()
+    }
+    if (!dealerHand.cards[1].isFaceUp) {
+        makeDealerShowButton(theDealer);
+    }
+    else if (dealerHand.score <= 16) {
+        makeDealerHitsButton(theDealer, 0);
+    }
+    else if (dealerHand.score >= 22) {
+        makeDealerBustButton(theDealer, 0);
+    }
+    else {
+        makeDealerStaysButton(theDealer, 0);
+    }
+}
+
+const sitThePlayers = (players) => {
+    players.forEach((player) => {
+        console.log('you are sitting player', player)
+        console.log('the table is', table)
+        sitAPlayer(player);
+    })
+}
+
+const endGame = () => {
+    console.log('you have entered the endGame function')
+    let playerStatus;
+    const dealerStatus = players[players.length - 1].status;
+    console.log('the dealer status is ', dealerStatus);
+
+    players.forEach((player) => {
+        if (player.playerName != 'Dealer') {
+            playerStatus = player.status;
+            console.log(`${player.playerName} status is ${playerStatus}`)
+        }
+    })
+}
+
+//Event handlers--------------------------------------------------------------------------------------------------
+const handlePlayersSit = (() => {
+    table.players = []
+    table.cards = []
+    setTheCards(4)
+    addPlayer('Ninja', 100)
+    addPlayer('Samurai', 100)
+    addPlayer('Dealer', 0, [], true);
+    players.forEach((player) => {
+        sitAPlayer(player);
+    })
+})
+
+const handleStartTheGame = () => {
     players.forEach((player) => {
         if (player.playerName != 'Dealer') {
             makeBetButton(player);
@@ -345,42 +457,20 @@ const startTheGame = () => {
     })
 }
 
-const checkHandOptions = () => {
-    players.forEach((player) => {
-        console.log(`you are checking the options of player ${player.playerName}`)
-        player.hands.forEach((hand) => {
-            const handIndex = player.hands.indexOf(hand);
-            if (hand.score > 21) {
-                console.log(`player ${player.playerName} is bust`)
-            }
-            else if (hand.score === 21 && hand.cards.length === 2) {
-                console.log(`player ${player.playerName} has blackJack`)
-            }
-            else {
-                makeHitButton(player, handIndex);
-                makeStayButton(player, handIndex);
-            }
-        })
-    })
-}
-
-//Event handlers--------------------------------------------------------------------------------------------------
 const handlePlayerBets = ((event) => {
     const myPlayer = identifyPlayer(event);
     const parent = event.target.parentElement
     parent.innerHTML = ''
+
     const newInput = document.createElement('input');
     newInput.classList.add('Bet-Input-Box')
-    newInput.defaultValue = 10;
-    myPlayer.options = [];
+    newInput.value = 10;
     const dollarSign = parent.appendChild(document.createElement('p'));
     dollarSign.textContent = '$';
     parent.appendChild(newInput);
     bet = newInput.value
-    parent.addEventListener('keydown', (event) => handleNewHandActions(event, bet))
-    myPlayer.cash -= newInput.value
-    // console.log(parent)
-    // parent.replaceChildren(); 
+    // myPlayer.cash -= newInput.value
+    parent.addEventListener('keydown', (event) => handleNewHandActions(event))
     return bet
 })
 
@@ -404,23 +494,24 @@ const handlePlayerSkips = ((event) => {
 })
 
 const handlePlayerHits = ((event) => {
-    console.log('you are inside the handlePlayerHits method')
     const myPlayer = identifyPlayer(event);
+    console.log(`inside the handlePlayerHits function, the player is`, myPlayer);
     const myHand = identifyHand(event);
-    console.log('the hand is', myHand);
+    console.log(`inside the handlePlayerHits function, the hand is`, myHand);
     dealACard(myHand, myPlayer);
-    console.log(event.target.parentElement);
-    // dealACard(player)
+    checkHandOptions();
 })
 
 const handlePlayerStays = ((event) => {
     const myPlayer = identifyPlayer(event);
-    console.log(event.target.parentElement)
-    // dealACard(player)
+    const myHand = identifyHand(event);
+    myPlayer.isInGame = false;
+    handIndex = myPlayer.hands.indexOf(myHand);
+    clearHandButtons(myPlayer, handIndex);
+    makeDoneButton(myPlayer, handIndex);
 })
 
 const handleClearOptionsList = ((event) => {
-    console.log('I have entered the handleClearOptionsList method')
     const myPlayer = identifyPlayer(event);
     if (event.key === 'Enter') {
         event.target.parentElement.innerHTML = '';
@@ -428,32 +519,31 @@ const handleClearOptionsList = ((event) => {
     }
 })
 
-const handleNewHandActions = (event, bet) => {
-    const myPlayer = identifyPlayer(event);
+const handleNewHandActions = (event) => {
     if (event.key === 'Enter') {
-        handleClearOptionsList(event);
+        const inputBetElmt = document.querySelector('.Bet-Input-Box');
+        const bet = inputBetElmt.value;
+        console.log(inputBetElmt.value)
+    const myPlayer = identifyPlayer(event);
+        myPlayer.cash -= bet
         updateCashButton(myPlayer, myPlayer.cash);
         createHand(myPlayer, bet);
+        handleClearOptionsList(event);
     }
 }
 
-const handleHit = ((event) => {
 
-})
-//----------------------------------------------------------------------------------------------------------------
+const handleDealerShows = (event) => {
+    const myPlayer = identifyPlayer(event);
+    myHand = myPlayer.hands[0];
+    myHand.cards[1].isFaceUp = true;
+    countHandValue(myHand);
+    updateHandDiv(myHand, myPlayer);
+    checkDealerOptions();
+}
 
-//Play the game--------------------------------------------------------------------------------------------------
+//Event Listeners----------------------------------------------------------------------------------------------------------------
+startButton.addEventListener('click', handleStartTheGame);
+sitButton.addEventListener('click', handlePlayersSit);
 
-init(4)
-
-addPlayer('Ninja', 100)
-addPlayer('Samurai', 100)
-addPlayer('Dealer', 0, [], true);
-
-//Place the dealer and players on the table on the table
-players.forEach((player) => {
-    sitAPlayer(player);
-})
-
-startTheGame()
 
