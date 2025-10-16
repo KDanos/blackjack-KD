@@ -1,31 +1,29 @@
 html, body {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size:25px;
     text-align: center;
     height: 100%;
     margin:0;
     padding: 0;
 }
 
-.my-grid{
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin:0 auto;
-    width:90%;
-    height: 90%;
+h1{
+    vertical-align: middle;
+    /* align-items: center;
+    justify-content: center; */
 }
 
-#Top-Elements {    
-    flex: 1;
-    align-self: stretch;
-    border: 1px solid black;
-    margin: 10px;
-    background-color: lightcyan;
+#Start-Button{
+    width: 200px;
+    aspect-ratio: 2/1;
+    border-radius: 25%;
+    vertical-align: middle;
+    font-size: 1em;
+    color: red;
+    gap: 50px;
 }
-
 #Table {
-    flex:2;
+    height: 70%;
     align-self: stretch;
     border: 1px solid black;
     margin: 10px;
@@ -37,29 +35,25 @@ html, body {
 
 #Dealer-Container{
     flex:1;
-    border: 1px solid black;
     margin: 10px;
     display: flex;
-    /* align-self: stretch; */
-    /* align items; */
     justify-content: center;
 }
 
 #Player-Seats{
     flex:1;
-    border: 1px solid black;
     margin: 10px;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
 }
+
 
 .Player-Container {
     border: 1px solid black;
     margin: 5px;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
+    align-items: center;  
 }
 
 .Player-Name {
@@ -74,13 +68,20 @@ html, body {
     flex: 1;
     width: 50px;
     border-radius: 50%;
+    font-size: large;
 }
-
 .Hands-Container {
     flex: 5;
-    border: 1px solid black;
     margin: 2px;
     display: flex;
+}
+
+.Points-Button {
+    flex: 1;
+    width: 50px;
+    border-radius: 50%;
+    background-color: lightpink
+    font-size: large;
 }
 
 .Options-Container {
@@ -93,8 +94,8 @@ html, body {
 .Options-Button{
     height: 100%;
     width: auto;
-    /* aspect-ratio: 1 / 1; */
-    border-radius: 50%
+    border-radius: 50%;
+    font-size: large;
 }
 
 .Bet-Input-Box{
@@ -106,6 +107,23 @@ html, body {
 }
 
 .Hand {
-    border: 1px solide black;
-    width: 50px;
+    display: inline-block;
+}
+
+.Card-Image {
+    width: 80px;
+    transform: scale (0.1);
+}
+
+.Hand-Buttons-Container{
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    font-size: large;
+}
+
+.Cards-Container{
+    display:flex;
+    margin: 10px 5px;
 }
