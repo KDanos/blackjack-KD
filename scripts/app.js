@@ -7,7 +7,6 @@ const faceDownImage = new Image();
 faceDownImage.src = 'images/red_joker.png'
 faceDownImage.classList.add('Card-Image')
 
-// const players = table.players;
 //Variables----------------------------------------------------------------------------------------------------------------
 let activePlayer;
 let activeHand;
