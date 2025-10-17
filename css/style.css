@@ -12,9 +12,9 @@ h1{
 }
 
 .Top-Button{
-    width: 200px;
-    aspect-ratio: 2/1;
-    border-radius: 50%;
+    width: 250px;
+    aspect-ratio: 3/1;
+    border-radius: 10%;
     vertical-align: middle;
     font-size: .5em;
     color: red;
@@ -88,39 +88,47 @@ h1{
     margin: 2px;
     display:flex;
     justify-content: center;
+    align-items: center;
 }
 
 .Options-Button{
-    height: 100%;
-    width: auto;
-    border-radius: 50%;
+    height: 25px;
+    width: 75px;
+    border-radius: 18px;
     font-size: large;
+    background-color: lightcyan;
 }
 
-.Result-Button{
-    height: 100%;
-    width: auto;
-    border-radius: 50%;
+.Results-Button{
+    height: 25px;
+    width: 150px;
+    border-radius: 18px;
     font-size: large;
     color: red;
     background-color: whitesmoke;
 }
 
 .Bet-Input-Box{
-    width: 20px;
-    height: 100%;
+    width: 30px;
+    height: 15px;
     background-color: rgba(175, 245, 225, 0.5);
     border: none;
-    font-weight: 700;
+    font-weight: 500;
+    font-size: 20px;
+    margin: 10px;
 }
 
 .Hand {
     display: inline-block;
+    margin: 0 10px;
 }
 
 .Card-Image {
     width: 80px;
     transform: scale (0.1);
+}
+.Cards-Container img:not(:first-of-type){
+    margin-left: -45px;
 }
 
 .Hand-Buttons-Container{
@@ -134,4 +142,14 @@ h1{
 .Cards-Container{
     display:flex;
     margin: 10px 5px;
+    justify-content: center;
+}
+
+.Hand-Options-Container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    gap: 5px;
 }
