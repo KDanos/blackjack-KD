@@ -181,7 +181,7 @@ const makeSplitButton = ((player, handIndex) => {
     const parentElement = document.getElementById(`${player.playerName}-hand-${handIndex}-Hand-Options-Container`);
     parentElement.appendChild(newBtn);
     newBtn.addEventListener('click', handlePlayerSplits);
-    })
+})
 
 const makeHitButton = ((player, handIndex) => {
     const newBtn = makeOptionsButton(player, 'Hit');
@@ -419,23 +419,27 @@ const checkHandOptions = () => {
         if (player.playerName != 'Dealer' && player.isInGame) {
             player.hands.forEach((hand) => {
                 const handIndex = player.hands.indexOf(hand);
-                clearHandButtons(player, handIndex);
-                if (hand.score > 21) { makeBustButton(player, handIndex); hand.status = 'bust'; }
-                else if (hand.score === 21 && hand.cards.length === 2) { makeBlackJackButton(player, handIndex); hand.status = 'blackjack'; }
-                else if (hand.cards.length === 1) { makeHitButton(player, handIndex); makeDoubleButton(player, handIndex);}
-                else {
-                    makeHitButton(player, handIndex); makeStayButton(player, handIndex);
-                    if (hand.cards.length === 2) {
-                        makeDoubleButton(player, handIndex); if (hand.cards[0].value === hand.cards[1].value) { makeSplitButton(player, handIndex); }
+                
+
+                if (hand.status === 'active') {
+                    clearHandButtons(player, handIndex);
+                    if (hand.score > 21) { makeBustButton(player, handIndex); hand.status = 'bust'; }
+                    else if (hand.score === 21 && hand.cards.length === 2) { makeBlackJackButton(player, handIndex); hand.status = 'blackjack'; }
+                    else if (hand.cards.length === 1) { makeHitButton(player, handIndex); makeDoubleButton(player, handIndex); }
+                    else {
+                        makeHitButton(player, handIndex); makeStayButton(player, handIndex);
+                        if (hand.cards.length === 2) {
+                            makeDoubleButton(player, handIndex); if (hand.cards[0].value === hand.cards[1].value) { makeSplitButton(player, handIndex); }
+                        }
                     }
                 }
             })
         }
         else if (player.playerName === 'Dealer') { checkDealerOptions() }
         else {
-            if (table.players.indexOf(player) < table.players.length) {
-                console.log('not a dealer and not a player. How did we get here???')
-            }
+            // if (table.players.indexOf(player) < table.players.length) {
+            console.log('not a dealer and not a player. How did we get here???')
+            // }
         }
     }
     )
